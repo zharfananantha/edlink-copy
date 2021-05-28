@@ -1,0 +1,2 @@
+# edlink-copy
+ Duplikasi Edlink
