@@ -9,7 +9,9 @@ import com.example.edlink.model.Users
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.activity_signup.toolbar
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
@@ -19,6 +21,17 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.apply {
+            title = ""
+
+            // show back button on toolbar
+            // on back button press, it will navigate to parent activity
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
+
         database = Firebase.database.reference
         list = mutableListOf()
 
@@ -44,7 +57,7 @@ class SignUpActivity : AppCompatActivity() {
             return Toast.makeText(this, "Silahkan isi Password terlebih dahulu",Toast.LENGTH_LONG).show()
         } else if (retypePass.isEmpty()) {
             return Toast.makeText(this, "Silahkan isi Retype Password terlebih dahulu",Toast.LENGTH_LONG).show()
-        } else if (!pass.equals(retypePass, ignoreCase = true)) {
+        } else if (!pass.equals(retypePass)) {
             return Toast.makeText(this, "Password dan Retype Password tidak sama",Toast.LENGTH_LONG).show()
         } else {
             val userId = database.push().key.toString()
@@ -90,5 +103,10 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun emailRegistered() {
         Toast.makeText(this, "Email Sudah Terdaftar",Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

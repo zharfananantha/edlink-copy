@@ -20,7 +20,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             } else {
-                val intent = Intent(applicationContext, LoginActivity::class.java)
+                val intent = Intent(applicationContext, LandingPageActivity::class.java)
                 startActivity(intent)
                 finish()
             }

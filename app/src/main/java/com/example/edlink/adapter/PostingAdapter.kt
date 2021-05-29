@@ -1,8 +1,6 @@
 package com.example.edlink.adapter
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +12,13 @@ import com.example.edlink.R
 import com.example.edlink.model.Posting
 import kotlinx.android.synthetic.main.posting_item.view.*
 import java.text.SimpleDateFormat
-import java.util.*
 
 
-class PostingAdapter(private val list: List<Posting>, private val ctx: Context) : RecyclerView.Adapter<PostingAdapter.ViewHolder>() {
+class PostingAdapter(
+    private val list: List<Posting>,
+    private val ctx: Context,
+    private val onItemClicked: (Posting) -> Unit
+) : RecyclerView.Adapter<PostingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -33,25 +34,27 @@ class PostingAdapter(private val list: List<Posting>, private val ctx: Context) 
         val item = list[position]
         val simpleDateFormat = SimpleDateFormat("dd MMM yyyy HH:mm:ss")
         val dateString = simpleDateFormat.format(item.date.toLong())
-//        val formatDate = "dd MMM yyyy hh:mm:ss"
-//        val formatter: SimpleDateFormat = SimpleDateFormat(formatDate)
-//        val calendar: Calendar = Calendar.getInstance()
-//        calendar.setTimeInMillis(item.date.toLong())
-//        val theDate = formatter.format(calendar.getTime())
+
         Log.d("CEK", "CONTENT IMAGE ${item.contentImage}")
-        Glide.with(ctx)
-            .load(item.contentImage)
-            .centerCrop()
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
-            .dontAnimate()
-            .into(holder.imgContent);
-//        val myUri: Uri = Uri.parse(item.contentImage)
+        if (item.contentImage.equals("")) {
+            holder.imgContent.visibility = View.GONE
+        } else {
+            Glide.with(ctx)
+                .load(item.contentImage)
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .dontAnimate()
+                .into(holder.imgContent)
+        }
 
         holder.nama.text = item.fullname
         holder.txtContent.text = item.contentText
         holder.tgl.text = dateString
-//        holder.imgContent.setImageURI(myUri)
+
+        holder.itemLayout.setOnClickListener {
+            onItemClicked(item)
+        }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -59,7 +62,10 @@ class PostingAdapter(private val list: List<Posting>, private val ctx: Context) 
         var tgl = view.dateLabel
         var imgContent = view.mainContentImage
         var txtContent = view.mainContentText
+        var itemLayout = view.postingLayout
     }
+
+
 }
 
 

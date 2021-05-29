@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edlink.AddPostingActivity
+import com.example.edlink.DetailPostingActivity
 import com.example.edlink.R
 import com.example.edlink.SignUpActivity
 import com.example.edlink.adapter.PostingAdapter
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -60,19 +62,28 @@ class HomeFragment : Fragment() {
         database.child("postings").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0!!.exists()) {
+                    postingEmptyLabel.visibility = View.GONE
+                    list.clear()
                     for (h in p0.children) {
                         val post = h.getValue(Posting::class.java)
                         list.add(post!!)
                     }
+                    list.reverse()
                     if (activity !== null) {
                         postingRecyclerView.apply {
                             layoutManager = LinearLayoutManager(activity!!)
-                            adapter = PostingAdapter(list, activity!!)
+                            adapter = PostingAdapter(list, activity!!) { posting ->
+                                activity?.let {
+                                    val intent = Intent(it, DetailPostingActivity::class.java)
+                                    val jsonString = Gson().toJson(posting)
+                                    intent.putExtra("DetailPosting", jsonString)
+                                    it.startActivity(intent)
+                                }
+                            }
                         }
                     }
-                    list.forEach { post ->
-                        Log.d("CEK", "Posting Text ${post.contentText}")
-                    }
+                } else {
+                    postingEmptyLabel.visibility = View.VISIBLE
                 }
             }
 

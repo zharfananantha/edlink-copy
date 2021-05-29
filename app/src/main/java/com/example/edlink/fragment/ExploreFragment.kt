@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.edlink.R
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class ExploreFragment : Fragment() {
 
@@ -19,6 +20,7 @@ class ExploreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        toolbar.title = "Explore"
     }
 
 }

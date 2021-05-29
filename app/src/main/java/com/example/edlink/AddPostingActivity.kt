@@ -68,35 +68,40 @@ class AddPostingActivity : AppCompatActivity() {
         val text = contentTextInput.text.toString()
         var downloadUri: Uri? = null
 
-        if (imageUri !== null) {
-            val progressDialog = ProgressDialog(this)
-            progressDialog.setTitle("Uploading...")
-            progressDialog.show()
-
-            val ref = storageReference?.child("images/" + UUID.randomUUID().toString())
-            val uploadTask = ref?.putFile(imageUri!!)
-
-            val urlTask = uploadTask?.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.let {
-                        throw it
-                    }
-                }
-                return@Continuation ref.downloadUrl
-            })?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    downloadUri = task.result
-                    progressDialog.dismiss()
-                    doPosting(id, userId, userFullName, dateNow, text, downloadUri.toString())
-                } else {
-                    // Handle failures
-                }
-            }?.addOnFailureListener{
-
-            }
+        if (text.isEmpty()) {
+            return Toast.makeText(this, "Silahkan isi Teks Posting terlebih dahulu",Toast.LENGTH_LONG).show()
         } else {
-            doPosting(id, userId, userFullName, dateNow, text, "")
+            if (imageUri !== null) {
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setTitle("Uploading...")
+                progressDialog.show()
+
+                val ref = storageReference?.child("images/" + UUID.randomUUID().toString())
+                val uploadTask = ref?.putFile(imageUri!!)
+
+                val urlTask = uploadTask?.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    return@Continuation ref.downloadUrl
+                })?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        downloadUri = task.result
+                        progressDialog.dismiss()
+                        doPosting(id, userId, userFullName, dateNow, text, downloadUri.toString())
+                    } else {
+                        // Handle failures
+                    }
+                }?.addOnFailureListener{
+
+                }
+            } else {
+                doPosting(id, userId, userFullName, dateNow, text, "")
+            }
         }
+
 
     }
 
@@ -104,6 +109,7 @@ class AddPostingActivity : AppCompatActivity() {
         val postPosting = Posting(id, userId, userFullName, dateNow, text, imageString)
         database.child("postings").child(id).setValue(postPosting).addOnCompleteListener {
             Toast.makeText(this, "Successs Input Data", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 

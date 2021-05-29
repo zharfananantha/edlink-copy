@@ -1,10 +1,7 @@
 package com.example.edlink
 
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.edlink.model.Users
@@ -15,23 +12,33 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.inputEmail
+import kotlinx.android.synthetic.main.activity_login.inputPassword
 
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var list : MutableList<Users>
     private lateinit var userChoosen: Users
-    private lateinit var mPrefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.apply {
+            title = ""
+
+            // show back button on toolbar
+            // on back button press, it will navigate to parent activity
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
+
         ModelPreferencesManager.with(application)
         database = Firebase.database.reference
         list = mutableListOf()
-        mPrefs = getPreferences(MODE_PRIVATE)
         doInitialize()
 
         loginBtn.setOnClickListener {
@@ -72,11 +79,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun gotoHome() {
         ModelPreferencesManager.put(userChoosen, "user")
-//        val prefsEditor: Editor = mPrefs.edit()
-//        val gson = Gson()
-//        val json = gson.toJson(userChoosen)
-//        prefsEditor.putString("User", json)
-//        prefsEditor.apply()
         Toast.makeText(this, "Berhasil Login", Toast.LENGTH_LONG).show()
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
@@ -98,5 +100,10 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }
