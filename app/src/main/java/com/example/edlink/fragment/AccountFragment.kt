@@ -50,7 +50,7 @@ class AccountFragment : Fragment() {
         exitLayout.setOnClickListener {
             ModelPreferencesManager.put(null, "user")
             activity?.let{
-                val intent = Intent (it, LoginActivity::class.java)
+                val intent = Intent (it, LandingPageActivity::class.java)
                 it.startActivity(intent)
                 it.finish()
             }

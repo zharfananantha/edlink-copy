@@ -64,7 +64,7 @@ class SignUpActivity : AppCompatActivity() {
             val user = Users(userId,email,nama,pass)
             database.child("users").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    Log.d("CEK", "HALO") //To change body of created functions use File | Settings | File Templates.
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -85,6 +85,8 @@ class SignUpActivity : AppCompatActivity() {
                         } else {
                             emailRegistered()
                         }
+                    } else {
+                        addToDB(userId, user)
                     }
                 }
             })
